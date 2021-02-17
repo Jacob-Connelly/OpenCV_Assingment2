@@ -59,6 +59,9 @@ while True:
     low_HSV = np.array([hL, sL, vL])
 
     frame_threshold = cv.inRange(hsv, low_HSV, max_HSV)
-    cv.imshow("Tracker", frame_threshold)
+    kernel = np.ones((5, 5), np.uint8)
+    erosion = cv.erode(frame_threshold, kernel, iterations=1)
+    dilation = cv.dilate(erosion, kernel, iterations=1)
+    cv.imshow("Tracker", dilation)
 
 cv.destroyAllWindows()
