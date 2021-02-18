@@ -17,14 +17,15 @@ while True:
     cv.imshow("Original", newFrame)
 
     blur = cv.blur(newFrame, (5, 5))
-    imageForAve = cv.accumulateWeighted(blur, imageForAve, .1)
+    imageForAve = cv.accumulateWeighted(blur, imageForAve, .3)
     runningColorDepth = cv.convertScaleAbs(imageForAve, runningColorDepth)
     difference = cv.absdiff(newFrame, runningColorDepth, difference)
     gray = cv.cvtColor(difference, cv.COLOR_BGR2GRAY)
-    thresholdLow = cv.threshold(gray, 0, 5, cv.THRESH_BINARY)
-    #gray_blur = cv.blur(thresholdLow, (5, 5))
+    ret, thresholdLow = cv.threshold(gray, 10, 255, cv.THRESH_BINARY)
+    lowThresh_blur = cv.blur(thresholdLow, (5, 5))
+    ret, thresholdHigh = cv.threshold(lowThresh_blur, 250, 255, cv.THRESH_BINARY)
 
-    cv.imshow("test", thresholdLow)
+    cv.imshow("test", thresholdHigh)
 
     k = cv.waitKey(1)
     if k == 27:
