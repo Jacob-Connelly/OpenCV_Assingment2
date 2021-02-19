@@ -15,7 +15,7 @@ while True:
     status, newFrame = cap.read()
 
     blur = cv.blur(newFrame, (5, 5))
-    imageForAve = cv.accumulateWeighted(blur, imageForAve, .3)
+    imageForAve = cv.accumulateWeighted(blur, imageForAve, .4)
     runningColorDepth = cv.convertScaleAbs(imageForAve, runningColorDepth)
     difference = cv.absdiff(newFrame, runningColorDepth, difference)
     gray = cv.cvtColor(difference, cv.COLOR_BGR2GRAY)
@@ -23,10 +23,16 @@ while True:
     lowThresh_blur = cv.blur(thresholdLow, (5, 5))
     ret, thresholdHigh = cv.threshold(lowThresh_blur, 250, 255, cv.THRESH_BINARY)
     contours, hierarchy = cv.findContours(thresholdHigh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-    cv.drawContours(newFrame, contours, -1, (0, 255, 0), 3)
 
-    cv.imshow("test", thresholdHigh)
-    cv.imshow("Original", newFrame)
+    for contour in contours:
+        (x, y, w, h) = cv.boundingRect(contour)
+
+        if cv.contourArea(contour) < 5000:
+            continue
+        cv.rectangle(newFrame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+    cv.imshow("Black and White", thresholdHigh)
+    cv.imshow("Contours", newFrame)
 
     k = cv.waitKey(1)
     if k == 27:
